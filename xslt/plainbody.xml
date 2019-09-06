@@ -1,0 +1,104 @@
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+                xmlns:x="http://www.tei-c.org/ns/1.0"
+                exclude-result-prefixes="x">
+<xsl:output method="text" encoding="UTF-8" omit-xml-declaration="yes"/>
+
+<xsl:param name="lb" select="'true'"/>
+<xsl:param name="pb" select="'true'"/>
+<xsl:param name="del" select="'true'"/>
+<xsl:param name="add" select="'true'"/>
+
+<xsl:template match="x:pb">
+    <xsl:if test='$pb = "true"'>
+        <xsl:text>[</xsl:text><xsl:value-of select="@n"/><xsl:text>]</xsl:text>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template match="x:lb">
+    <xsl:if test='$lb = "true"'>
+        <xsl:text>[</xsl:text><xsl:value-of select="@n"/><xsl:text>]</xsl:text>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template match="x:fw">
+</xsl:template>
+
+<xsl:template match="x:div[@type='story']">
+    <xsl:text>story </xsl:text>
+    <xsl:value-of select="@id"/>
+    <xsl:text>
+    
+    </xsl:text>
+    <xsl:apply-templates/>
+    <xsl:text>
+    
+    </xsl:text>
+</xsl:template>
+
+<xsl:template match="x:div[@type='verse']">
+    <xsl:text>
+    </xsl:text>
+    <xsl:apply-templates />
+    <xsl:text>
+    </xsl:text>
+</xsl:template>
+
+<xsl:template match="x:del">
+    <xsl:if test='$del = "true"'>
+        <xsl:apply-templates/>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template match="x:add">
+    <xsl:if test='$add = "true"'>
+        <xsl:apply-templates/>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template match="x:subst">
+    <xsl:apply-templates />
+</xsl:template>
+
+<xsl:template match="x:g">
+        <xsl:apply-templates/>
+</xsl:template>
+
+<xsl:template name="repeat">
+    <xsl:param name="output" />
+    <xsl:param name="count" />
+    <xsl:if test="$count &gt; 0">
+        <xsl:value-of select="$output" />
+        <xsl:call-template name="repeat">
+            <xsl:with-param name="output" select="$output" />
+            <xsl:with-param name="count" select="$count - 1" />
+        </xsl:call-template>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template match="x:gap">
+    <xsl:text>gap</xsl:text>
+    <xsl:choose>
+        <xsl:when test="@quantity">
+            <xsl:text> of </xsl:text><xsl:value-of select="@quantity"/>
+            <xsl:choose>
+            <xsl:when test="@unit">
+            <xsl:text> </xsl:text><xsl:value-of select="@unit"/>
+            </xsl:when>
+            <xsl:otherwise>
+            <xsl:text> akṣara</xsl:text>
+            </xsl:otherwise>
+            </xsl:choose>
+                <xsl:if test="@quantity &gt; '1'">
+                    <xsl:text>s</xsl:text>
+                </xsl:if>
+        </xsl:when>
+        <xsl:when test="@extent">
+            <xsl:text> of </xsl:text><xsl:value-of select="@extent"/>
+        </xsl:when>
+    </xsl:choose>
+    <xsl:if test="@reason">
+        <xsl:text> (</xsl:text><xsl:value-of select="@reason"/><xsl:text>)</xsl:text>
+    </xsl:if>
+</xsl:template>
+
+</xsl:stylesheet>
